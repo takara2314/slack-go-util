@@ -666,7 +666,11 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := ConvertMarkdownTextToBlocks(tt.markdown)
+			got, err := ConvertMarkdownTextToBlocks(tt.markdown)
+			if err != nil {
+				t.Errorf("ConvertMarkdownTextToBlocks() にエラーが発生しました: %v", err)
+				return
+			}
 			if len(got) != len(tt.want) {
 				t.Errorf("ConvertMarkdownTextToBlocks() のブロック数が異なります got = %v, want %v", len(got), len(tt.want))
 				return

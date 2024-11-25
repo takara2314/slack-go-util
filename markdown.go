@@ -10,7 +10,7 @@ import (
 
 var md = goldmark.New()
 
-func ConvertMarkdownTextToBlocks(markdown string) []slack.Block {
+func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 	source := []byte(markdown)
 	doc := md.Parser().Parse(text.NewReader(source))
 	blocks := []slack.Block{}
@@ -194,10 +194,10 @@ func ConvertMarkdownTextToBlocks(markdown string) []slack.Block {
 	})
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return blocks
+	return blocks, nil
 }
 
 func getListStyle(list *ast.List) slack.RichTextListElementType {
