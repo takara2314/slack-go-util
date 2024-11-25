@@ -1,7 +1,9 @@
-// markdown.go
 package util
 
 import (
+	"fmt"
+	"regexp"
+
 	"github.com/slack-go/slack"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -9,9 +11,11 @@ import (
 )
 
 var md = goldmark.New()
+var newlineRegex = regexp.MustCompile(`\n{1,}`)
 
 func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
-	source := []byte(markdown)
+	normalizedMarkdown := normalizeNewlines(markdown)
+	source := []byte(normalizedMarkdown)
 	doc := md.Parser().Parse(text.NewReader(source))
 	blocks := []slack.Block{}
 
@@ -40,14 +44,12 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 			return ast.WalkSkipChildren, nil
 
 		case ast.KindParagraph:
-			elements := parseInlineElements(n, source)
-			blocks = append(blocks, &slack.RichTextBlock{
-				Type: slack.MBTRichText,
-				Elements: []slack.RichTextElement{
-					&slack.RichTextSection{
-						Type:     slack.RTESection,
-						Elements: elements,
-					},
+			mrkdwn := convertInlineMarkdownToMrkdwn(string(n.Text(source)))
+			blocks = append(blocks, &slack.SectionBlock{
+				Type: slack.MBTSection,
+				Text: &slack.TextBlockObject{
+					Type: slack.MarkdownType,
+					Text: mrkdwn,
 				},
 			})
 			return ast.WalkSkipChildren, nil
@@ -302,4 +304,67 @@ func getTextStyle(isBold, isItalic bool) *slack.RichTextSectionTextStyle {
 		Bold:   isBold,
 		Italic: isItalic,
 	}
+}
+
+func convertInlineMarkdownToMrkdwn(markdown string) string {
+	doc := md.Parser().Parse(text.NewReader([]byte(markdown)))
+	var result string
+	var inEmphasis bool
+	var emphasisLevel int
+
+	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+		switch n.Kind() {
+		case ast.KindText:
+			if entering {
+				text := string(n.Text([]byte(markdown)))
+				if inEmphasis {
+					switch emphasisLevel {
+					case 1:
+						result += "_" + text + "_"
+					case 2:
+						result += "*" + text + "*"
+					}
+					inEmphasis = false
+				} else {
+					result += text
+				}
+			}
+			return ast.WalkContinue, nil
+
+		case ast.KindEmphasis:
+			if entering {
+				inEmphasis = true
+				emphasisLevel = n.(*ast.Emphasis).Level
+			}
+			return ast.WalkContinue, nil
+
+		case ast.KindLink:
+			if entering {
+				link := n.(*ast.Link)
+				var text string
+				for c := link.FirstChild(); c != nil; c = c.NextSibling() {
+					if c.Kind() == ast.KindText {
+						text += string(c.Text([]byte(markdown)))
+					}
+				}
+				result += fmt.Sprintf("<%s|%s>", string(link.Destination), text)
+				return ast.WalkSkipChildren, nil
+			}
+		}
+
+		return ast.WalkContinue, nil
+	})
+
+	return result
+}
+
+func normalizeNewlines(s string) string {
+	return newlineRegex.ReplaceAllStringFunc(s, func(match string) string {
+		switch len(match) {
+		case 1:
+			return "\n\n"
+		default:
+			return match
+		}
+	})
 }

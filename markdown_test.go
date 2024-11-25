@@ -490,7 +490,35 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 							Elements: []slack.RichTextSectionElement{
 								&slack.RichTextSectionTextElement{
 									Type: slack.RTSEText,
-									Text: "1行目\n2行目\n3行目",
+									Text: "1行目",
+								},
+							},
+						},
+					},
+				},
+				&slack.RichTextBlock{
+					Type: slack.MBTRichText,
+					Elements: []slack.RichTextElement{
+						&slack.RichTextSection{
+							Type: slack.RTESection,
+							Elements: []slack.RichTextSectionElement{
+								&slack.RichTextSectionTextElement{
+									Type: slack.RTSEText,
+									Text: "2行目",
+								},
+							},
+						},
+					},
+				},
+				&slack.RichTextBlock{
+					Type: slack.MBTRichText,
+					Elements: []slack.RichTextElement{
+						&slack.RichTextSection{
+							Type: slack.RTESection,
+							Elements: []slack.RichTextSectionElement{
+								&slack.RichTextSectionTextElement{
+									Type: slack.RTSEText,
+									Text: "3行目",
 								},
 							},
 						},
