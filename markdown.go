@@ -199,7 +199,63 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 		return nil, err
 	}
 
-	return blocks, nil
+	arrangedBlocks := arrangeMrkdwnElements(blocks)
+	return arrangedBlocks, nil
+}
+
+func arrangeMrkdwnElements(blocks []slack.Block) []slack.Block {
+	if len(blocks) < 2 {
+		return blocks
+	}
+
+	var arrangedBlocks []slack.Block
+	var currentText string
+	var lastWasSection bool
+
+	for _, block := range blocks {
+		if section, ok := block.(*slack.SectionBlock); ok && section.Type == slack.MBTSection {
+			if lastWasSection {
+				currentText += "\n" + section.Text.Text
+			} else {
+				if currentText != "" {
+					arrangedBlocks = append(arrangedBlocks, &slack.SectionBlock{
+						Type: slack.MBTSection,
+						Text: &slack.TextBlockObject{
+							Type: slack.MarkdownType,
+							Text: currentText,
+						},
+					})
+				}
+				currentText = section.Text.Text
+				lastWasSection = true
+			}
+		} else {
+			if currentText != "" {
+				arrangedBlocks = append(arrangedBlocks, &slack.SectionBlock{
+					Type: slack.MBTSection,
+					Text: &slack.TextBlockObject{
+						Type: slack.MarkdownType,
+						Text: currentText,
+					},
+				})
+				currentText = ""
+			}
+			arrangedBlocks = append(arrangedBlocks, block)
+			lastWasSection = false
+		}
+	}
+
+	if currentText != "" {
+		arrangedBlocks = append(arrangedBlocks, &slack.SectionBlock{
+			Type: slack.MBTSection,
+			Text: &slack.TextBlockObject{
+				Type: slack.MarkdownType,
+				Text: currentText,
+			},
+		})
+	}
+
+	return arrangedBlocks
 }
 
 func getListStyle(list *ast.List) slack.RichTextListElementType {
