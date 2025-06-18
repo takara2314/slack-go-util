@@ -1,9 +1,10 @@
 module github.com/takara2314/slack-go-util
 
-go 1.23.0
+go 1.24.4
 
 require (
-	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/slack-go/slack v0.15.0 // indirect
-	github.com/yuin/goldmark v1.7.8 // indirect
+	github.com/slack-go/slack v0.17.1
+	github.com/yuin/goldmark v1.7.12
 )
+
+require github.com/gorilla/websocket v1.5.3 // indirect

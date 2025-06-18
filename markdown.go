@@ -33,12 +33,13 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 				line := lines.At(i)
 				text += string(line.Value(source))
 			}
+			emojiEnabled := true
 			blocks = append(blocks, &slack.HeaderBlock{
 				Type: slack.MBTHeader,
 				Text: &slack.TextBlockObject{
 					Type:  slack.PlainTextType,
 					Text:  text,
-					Emoji: true,
+					Emoji: &emojiEnabled,
 				},
 			})
 			return ast.WalkSkipChildren, nil

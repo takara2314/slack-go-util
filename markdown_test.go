@@ -6,6 +6,11 @@ import (
 	"github.com/slack-go/slack"
 )
 
+var (
+	boolTrue  = true
+	boolFalse = false
+)
+
 func TestConvertMarkdownTextToBlocks(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -21,7 +26,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
 						Text:  "タイトル",
-						Emoji: true,
+						Emoji: &boolTrue,
 					},
 				},
 			},
@@ -232,7 +237,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
 						Text:  "おはようございます",
-						Emoji: true,
+						Emoji: &boolTrue,
 					},
 				},
 				&slack.SectionBlock{
@@ -247,7 +252,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
 						Text:  "こんにちは",
-						Emoji: true,
+						Emoji: &boolTrue,
 					},
 				},
 				&slack.SectionBlock{
@@ -262,7 +267,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
 						Text:  "こんばんは",
-						Emoji: true,
+						Emoji: &boolTrue,
 					},
 				},
 				&slack.SectionBlock{
@@ -366,7 +371,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
 						Text:  "メインタイトル",
-						Emoji: true,
+						Emoji: &boolTrue,
 					},
 				},
 				&slack.SectionBlock{
