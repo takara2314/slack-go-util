@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/slack-go/slack"
 	"github.com/yuin/goldmark"
@@ -92,17 +93,19 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 				line := lines.At(i)
 				codeText += string(line.Value(source))
 			}
+			// Trim trailing newline for cleaner output
+			codeText = strings.TrimSuffix(codeText, "\n")
+
 			blocks = append(blocks, &slack.RichTextBlock{
 				Type: slack.MBTRichText,
 				Elements: []slack.RichTextElement{
-					&slack.RichTextSection{
-						Type: slack.RTESection,
-						Elements: []slack.RichTextSectionElement{
-							&slack.RichTextSectionTextElement{
-								Type: slack.RTSEText,
-								Text: codeText,
-								Style: &slack.RichTextSectionTextStyle{
-									Code: true,
+					&slack.RichTextPreformatted{
+						RichTextSection: slack.RichTextSection{
+							Type: slack.RTEPreformatted,
+							Elements: []slack.RichTextSectionElement{
+								&slack.RichTextSectionTextElement{
+									Type: slack.RTSEText,
+									Text: codeText,
 								},
 							},
 						},
