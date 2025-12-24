@@ -2,8 +2,6 @@ package util
 
 import (
 	"fmt"
-	"regexp"
-	"strings"
 
 	"github.com/slack-go/slack"
 	"github.com/yuin/goldmark"
@@ -12,11 +10,9 @@ import (
 )
 
 var md = goldmark.New()
-var newlineRegex = regexp.MustCompile(`\n{1,}`)
 
 func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
-	normalizedMarkdown := normalizeNewlines(markdown)
-	source := []byte(normalizedMarkdown)
+	source := []byte(markdown)
 	doc := md.Parser().Parse(text.NewReader(source))
 	blocks := []slack.Block{}
 
@@ -46,7 +42,14 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 			return ast.WalkSkipChildren, nil
 
 		case ast.KindParagraph:
-			mrkdwn := convertInlineMarkdownToMrkdwn(string(n.Text(source)))
+			para := n.(*ast.Paragraph)
+			var paraText string
+			lines := para.Lines()
+			for i := 0; i < lines.Len(); i++ {
+				line := lines.At(i)
+				paraText += string(line.Value(source))
+			}
+			mrkdwn := convertInlineMarkdownToMrkdwn(paraText)
 			blocks = append(blocks, &slack.SectionBlock{
 				Type: slack.MBTSection,
 				Text: &slack.TextBlockObject{
@@ -175,7 +178,8 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 			var text string
 			for c := link.FirstChild(); c != nil; c = c.NextSibling() {
 				if c.Kind() == ast.KindText {
-					text += string(c.Text(source))
+					textNode := c.(*ast.Text)
+					text += string(textNode.Segment.Value(source))
 				}
 			}
 			elements := []slack.RichTextSectionElement{
@@ -203,63 +207,7 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 		return nil, err
 	}
 
-	arrangedBlocks := arrangeMrkdwnElements(blocks)
-	return arrangedBlocks, nil
-}
-
-func arrangeMrkdwnElements(blocks []slack.Block) []slack.Block {
-	if len(blocks) < 2 {
-		return blocks
-	}
-
-	var arrangedBlocks []slack.Block
-	var currentText string
-	var lastWasSection bool
-
-	for _, block := range blocks {
-		if section, ok := block.(*slack.SectionBlock); ok && section.Type == slack.MBTSection {
-			if lastWasSection {
-				currentText += "\n" + section.Text.Text
-			} else {
-				if currentText != "" {
-					arrangedBlocks = append(arrangedBlocks, &slack.SectionBlock{
-						Type: slack.MBTSection,
-						Text: &slack.TextBlockObject{
-							Type: slack.MarkdownType,
-							Text: currentText,
-						},
-					})
-				}
-				currentText = section.Text.Text
-				lastWasSection = true
-			}
-		} else {
-			if currentText != "" {
-				arrangedBlocks = append(arrangedBlocks, &slack.SectionBlock{
-					Type: slack.MBTSection,
-					Text: &slack.TextBlockObject{
-						Type: slack.MarkdownType,
-						Text: currentText,
-					},
-				})
-				currentText = ""
-			}
-			arrangedBlocks = append(arrangedBlocks, block)
-			lastWasSection = false
-		}
-	}
-
-	if currentText != "" {
-		arrangedBlocks = append(arrangedBlocks, &slack.SectionBlock{
-			Type: slack.MBTSection,
-			Text: &slack.TextBlockObject{
-				Type: slack.MarkdownType,
-				Text: currentText,
-			},
-		})
-	}
-
-	return arrangedBlocks
+	return blocks, nil
 }
 
 func getListStyle(list *ast.List) slack.RichTextListElementType {
@@ -311,7 +259,8 @@ func parseInlineElements(n ast.Node, source []byte) []slack.RichTextSectionEleme
 			var text string
 			for c := link.FirstChild(); c != nil; c = c.NextSibling() {
 				if c.Kind() == ast.KindText {
-					text += string(c.Text(source))
+					textNode := c.(*ast.Text)
+					text += string(textNode.Segment.Value(source))
 				}
 			}
 			elements = append(elements, &slack.RichTextSectionLinkElement{
@@ -321,7 +270,13 @@ func parseInlineElements(n ast.Node, source []byte) []slack.RichTextSectionEleme
 			})
 
 		case ast.KindCodeSpan:
-			text := string(node.Text(source))
+			var text string
+			for c := node.FirstChild(); c != nil; c = c.NextSibling() {
+				if c.Kind() == ast.KindText {
+					textNode := c.(*ast.Text)
+					text += string(textNode.Segment.Value(source))
+				}
+			}
 			if currentText != "" {
 				elements = append(elements, &slack.RichTextSectionTextElement{
 					Type: slack.RTSEText,
@@ -367,64 +322,76 @@ func getTextStyle(isBold, isItalic bool) *slack.RichTextSectionTextStyle {
 }
 
 func convertInlineMarkdownToMrkdwn(markdown string) string {
-	doc := md.Parser().Parse(text.NewReader([]byte(markdown)))
+	source := []byte(markdown)
+	doc := md.Parser().Parse(text.NewReader(source))
 	var result string
-	var inEmphasis bool
-	var emphasisLevel int
 
-	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+	var processNode func(ast.Node)
+	processNode = func(n ast.Node) {
+		if n == nil {
+			return
+		}
+
 		switch n.Kind() {
 		case ast.KindText:
-			if entering {
-				text := string(n.Text([]byte(markdown)))
-				if inEmphasis {
-					switch emphasisLevel {
-					case 1:
-						result += "_" + text + "_"
-					case 2:
-						result += "*" + text + "*"
-					}
-					inEmphasis = false
-				} else {
-					result += text
-				}
-			}
-			return ast.WalkContinue, nil
+			textNode := n.(*ast.Text)
+			result += string(textNode.Segment.Value(source))
 
 		case ast.KindEmphasis:
-			if entering {
-				inEmphasis = true
-				emphasisLevel = n.(*ast.Emphasis).Level
+			emp := n.(*ast.Emphasis)
+			switch emp.Level {
+			case 2:
+				result += "*"
+				for c := n.FirstChild(); c != nil; c = c.NextSibling() {
+					processNode(c)
+				}
+				result += "*"
+			case 1:
+				result += "_"
+				for c := n.FirstChild(); c != nil; c = c.NextSibling() {
+					processNode(c)
+				}
+				result += "_"
 			}
-			return ast.WalkContinue, nil
+			return
 
 		case ast.KindLink:
-			if entering {
-				link := n.(*ast.Link)
-				var text string
-				for c := link.FirstChild(); c != nil; c = c.NextSibling() {
-					if c.Kind() == ast.KindText {
-						text += string(c.Text([]byte(markdown)))
-					}
+			link := n.(*ast.Link)
+			var text string
+			for c := link.FirstChild(); c != nil; c = c.NextSibling() {
+				if c.Kind() == ast.KindText {
+					textNode := c.(*ast.Text)
+					text += string(textNode.Segment.Value(source))
 				}
-				result += fmt.Sprintf("<%s|%s>", string(link.Destination), text)
-				return ast.WalkSkipChildren, nil
+			}
+			result += fmt.Sprintf("<%s|%s>", string(link.Destination), text)
+			return
+
+		case ast.KindCodeSpan:
+			var text string
+			for c := n.FirstChild(); c != nil; c = c.NextSibling() {
+				if c.Kind() == ast.KindText {
+					textNode := c.(*ast.Text)
+					text += string(textNode.Segment.Value(source))
+				}
+			}
+			result += "`" + text + "`"
+			return
+
+		default:
+			for c := n.FirstChild(); c != nil; c = c.NextSibling() {
+				processNode(c)
 			}
 		}
+	}
 
-		return ast.WalkContinue, nil
-	})
+	for c := doc.FirstChild(); c != nil; c = c.NextSibling() {
+		if c.Kind() == ast.KindParagraph {
+			for child := c.FirstChild(); child != nil; child = child.NextSibling() {
+				processNode(child)
+			}
+		}
+	}
 
 	return result
-}
-
-func normalizeNewlines(s string) string {
-	return newlineRegex.ReplaceAllStringFunc(s, func(match string) string {
-		switch len(match) {
-		case 1:
-			return "\n\n"
-		default:
-			return match
-		}
-	})
 }

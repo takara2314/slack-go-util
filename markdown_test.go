@@ -85,13 +85,13 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 		},
 		{
 			name:     "太文字と斜体混合の段落のテスト2",
-			markdown: "これは**太文字の中の *斜体* **です。",
+			markdown: "これは**太文字と*斜体*の混合**です。",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは*太文字の中の _斜体_ *です。",
+						Text: "これは*太文字と_斜体_の混合*です。",
 					},
 				},
 			},
@@ -380,27 +380,27 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 		},
 		{
 			name:     "複数行の段落のテスト",
-			markdown: "1行目\n2行目\n3行目",
+			markdown: "1行目\n\n2行目\n\n3行目",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "1段目",
+						Text: "1行目",
 					},
 				},
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "2段目",
+						Text: "2行目",
 					},
 				},
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "3段目",
+						Text: "3行目",
 					},
 				},
 			},
@@ -421,7 +421,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは**太字**と*斜体*が含まれた段落です。",
+						Text: "これは*太字*と_斜体_が含まれた段落です。",
 					},
 				},
 				&slack.RichTextBlock{
@@ -512,7 +512,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "[リンク](https://example.com)を含む`インラインコード`な段落です。",
+						Text: "<https://example.com|リンク>を含む`インラインコード`な段落です。",
 					},
 				},
 			},
