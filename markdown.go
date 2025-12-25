@@ -96,17 +96,17 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 				line := lines.At(i)
 				codeText += string(line.Value(source))
 			}
+
 			blocks = append(blocks, &slack.RichTextBlock{
 				Type: slack.MBTRichText,
 				Elements: []slack.RichTextElement{
-					&slack.RichTextSection{
-						Type: slack.RTESection,
-						Elements: []slack.RichTextSectionElement{
-							&slack.RichTextSectionTextElement{
-								Type: slack.RTSEText,
-								Text: codeText,
-								Style: &slack.RichTextSectionTextStyle{
-									Code: true,
+					&slack.RichTextPreformatted{
+						RichTextSection: slack.RichTextSection{
+							Type: slack.RTEPreformatted,
+							Elements: []slack.RichTextSectionElement{
+								&slack.RichTextSectionTextElement{
+									Type: slack.RTSEText,
+									Text: codeText,
 								},
 							},
 						},

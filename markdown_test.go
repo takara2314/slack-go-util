@@ -286,14 +286,57 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
-						&slack.RichTextSection{
-							Type: slack.RTESection,
-							Elements: []slack.RichTextSectionElement{
-								&slack.RichTextSectionTextElement{
-									Type: slack.RTSEText,
-									Text: "code block",
-									Style: &slack.RichTextSectionTextStyle{
-										Code: true,
+						&slack.RichTextPreformatted{
+							RichTextSection: slack.RichTextSection{
+								Type: slack.RTEPreformatted,
+								Elements: []slack.RichTextSectionElement{
+									&slack.RichTextSectionTextElement{
+										Type: slack.RTSEText,
+										Text: "code block",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name:     "マルチラインコードブロックのテスト",
+			markdown: "```\nfoo\nbar\n```",
+			want: []slack.Block{
+				&slack.RichTextBlock{
+					Type: slack.MBTRichText,
+					Elements: []slack.RichTextElement{
+						&slack.RichTextPreformatted{
+							RichTextSection: slack.RichTextSection{
+								Type: slack.RTEPreformatted,
+								Elements: []slack.RichTextSectionElement{
+									&slack.RichTextSectionTextElement{
+										Type: slack.RTSEText,
+										Text: "foo\nbar",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name:     "言語指定付きコードブロックのテスト",
+			markdown: "```go\nfunc main() {\n    fmt.Println(\"hello\")\n}\n```",
+			want: []slack.Block{
+				&slack.RichTextBlock{
+					Type: slack.MBTRichText,
+					Elements: []slack.RichTextElement{
+						&slack.RichTextPreformatted{
+							RichTextSection: slack.RichTextSection{
+								Type: slack.RTEPreformatted,
+								Elements: []slack.RichTextSectionElement{
+									&slack.RichTextSectionTextElement{
+										Type: slack.RTSEText,
+										Text: "func main() {\n    fmt.Println(\"hello\")\n}",
 									},
 								},
 							},
