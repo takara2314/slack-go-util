@@ -96,8 +96,6 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 				line := lines.At(i)
 				codeText += string(line.Value(source))
 			}
-			// Trim trailing newline for cleaner output
-			codeText = strings.TrimSuffix(codeText, "\n")
 
 			blocks = append(blocks, &slack.RichTextBlock{
 				Type: slack.MBTRichText,
