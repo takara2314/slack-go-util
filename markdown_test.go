@@ -104,8 +104,9 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
 						&slack.RichTextList{
-							Type:  slack.RTEList,
-							Style: slack.RTEListBullet,
+							Type:   slack.RTEList,
+							Style:  slack.RTEListBullet,
+							Indent: 0,
 							Elements: []slack.RichTextElement{
 								&slack.RichTextSection{
 									Type: slack.RTESection,
@@ -132,6 +133,74 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
+			name:     "ネストされたリストのテスト",
+			markdown: "- 親アイテム1\n  - 子アイテム1\n  - 子アイテム2\n- 親アイテム2",
+			want: []slack.Block{
+				&slack.RichTextBlock{
+					Type: slack.MBTRichText,
+					Elements: []slack.RichTextElement{
+						&slack.RichTextList{
+							Type:   slack.RTEList,
+							Style:  slack.RTEListBullet,
+							Indent: 0,
+							Elements: []slack.RichTextElement{
+								&slack.RichTextSection{
+									Type: slack.RTESection,
+									Elements: []slack.RichTextSectionElement{
+										&slack.RichTextSectionTextElement{
+											Type: slack.RTSEText,
+											Text: "親アイテム1",
+										},
+									},
+								},
+							},
+						},
+						&slack.RichTextList{
+							Type:   slack.RTEList,
+							Style:  slack.RTEListBullet,
+							Indent: 1,
+							Elements: []slack.RichTextElement{
+								&slack.RichTextSection{
+									Type: slack.RTESection,
+									Elements: []slack.RichTextSectionElement{
+										&slack.RichTextSectionTextElement{
+											Type: slack.RTSEText,
+											Text: "子アイテム1",
+										},
+									},
+								},
+								&slack.RichTextSection{
+									Type: slack.RTESection,
+									Elements: []slack.RichTextSectionElement{
+										&slack.RichTextSectionTextElement{
+											Type: slack.RTSEText,
+											Text: "子アイテム2",
+										},
+									},
+								},
+							},
+						},
+						&slack.RichTextList{
+							Type:   slack.RTEList,
+							Style:  slack.RTEListBullet,
+							Indent: 0,
+							Elements: []slack.RichTextElement{
+								&slack.RichTextSection{
+									Type: slack.RTESection,
+									Elements: []slack.RichTextSectionElement{
+										&slack.RichTextSectionTextElement{
+											Type: slack.RTSEText,
+											Text: "親アイテム2",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name:     "番号付きリストのテスト",
 			markdown: "1. アイテム1\n2. アイテム2",
 			want: []slack.Block{
@@ -140,7 +209,8 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Elements: []slack.RichTextElement{
 						&slack.RichTextList{
 							Type:  slack.RTEList,
-							Style: slack.RTEListOrdered,
+							Style:  slack.RTEListOrdered,
+							Indent: 0,
 							Elements: []slack.RichTextElement{
 								&slack.RichTextSection{
 									Type: slack.RTESection,
@@ -174,8 +244,9 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
 						&slack.RichTextList{
-							Type:  slack.RTEList,
-							Style: slack.RTEListBullet,
+							Type:   slack.RTEList,
+							Style:  slack.RTEListBullet,
+							Indent: 0,
 							Elements: []slack.RichTextElement{
 								&slack.RichTextSection{
 									Type: slack.RTESection,
@@ -428,8 +499,9 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
 						&slack.RichTextList{
-							Type:  slack.RTEList,
-							Style: slack.RTEListBullet,
+							Type:   slack.RTEList,
+							Style:  slack.RTEListBullet,
+							Indent: 0,
 							Elements: []slack.RichTextElement{
 								&slack.RichTextSection{
 									Type: slack.RTESection,
