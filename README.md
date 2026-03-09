@@ -1,4 +1,9 @@
 # 🚀 Slack API in Go Utility
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/takara2314/slack-go-util.svg)](https://pkg.go.dev/github.com/takara2314/slack-go-util)
+[![CI](https://github.com/takara2314/slack-go-util/actions/workflows/test.yaml/badge.svg)](https://github.com/takara2314/slack-go-util/actions/workflows/test.yaml)
+[![Release](https://img.shields.io/github/release/takara2314/slack-go-util.svg?style=flat-square)](https://github.com/takara2314/slack-go-util/releases)
+
 A powerful utility package for slack-go that converts Markdown text into Slack's Block Kit format with ease! ✨
 
 ## ✨ Features
@@ -7,6 +12,7 @@ A powerful utility package for slack-go that converts Markdown text into Slack's
     - Headers
     - Paragraphs
     - Lists
+    - Nested lists
     - Code blocks
     - Blockquotes
 
@@ -24,17 +30,19 @@ Here's a basic example of converting Markdown text to Slack Blocks:
 package main
 
 import (
-    "github.com/slack-go/slack"
-    "github.com/takara2314/slack-go-util"
+	"github.com/slack-go/slack"
+	slackUtil "github.com/takara2314/slack-go-util"
 )
 
 func main() {
-    // Initialize Slack API client
-    api := slack.New("your-slack-token")
+	// Initialize Slack API client
+	api := slack.New("your-slack-token")
 
-    markdown := `# Today's Tasks
+	markdown := `# Today's Tasks
 **Project Updates**
 - 🎯 Completed user authentication feature
+  - Login flow implemented
+  - Session management added
 - 🐛 Fixed database connection issues
 - 📱 Updated mobile responsive design
 
@@ -45,21 +53,22 @@ func main() {
 
 > Don't forget team meeting at 2pm!`
 
-    // Convert Markdown to Slack Blocks
-    blocks, err := slackUtil.ConvertMarkdownTextToBlocks(markdown)
-    if err != nil {
-        panic(err)
-    }
+	// Convert Markdown to Slack Blocks
+	blocks, err := slackUtil.ConvertMarkdownTextToBlocks(markdown)
+	if err != nil {
+		panic(err)
+	}
 
-    // Send message to Slack
-    _, _, err = api.PostMessage(
-        "CHANNEL_ID",
-        slack.MsgOptionBlocks(blocks...),
-    )
-    if err != nil {
-        panic(err)
-    }
+	// Send message to Slack
+	_, _, err = api.PostMessage(
+		"CHANNEL_ID",
+		slack.MsgOptionBlocks(blocks...),
+	)
+	if err != nil {
+		panic(err)
+	}
 }
+
 ```
 
 The above code will send a beautifully formatted message to your Slack channel, including both bulleted and numbered lists! 📝
