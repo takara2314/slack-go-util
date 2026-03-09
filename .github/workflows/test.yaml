@@ -15,7 +15,6 @@ jobs:
     strategy:
       matrix:
         go:
-          - "1.24"
           - "1.25"
           - "1.26"
     name: Test Go Code (Go ${{ matrix.go }})
