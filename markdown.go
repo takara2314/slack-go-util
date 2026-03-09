@@ -11,6 +11,7 @@ import (
 
 var md = goldmark.New()
 
+// ConvertMarkdownTextToBlocks converts a markdown text to a slice of slack blocks.
 func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 	source := []byte(markdown)
 	doc := md.Parser().Parse(text.NewReader(source))
