@@ -7,8 +7,7 @@ import (
 )
 
 var (
-	boolTrue  = true
-	boolFalse = false
+	boolTrue = true
 )
 
 func TestConvertMarkdownTextToBlocks(t *testing.T) {
@@ -18,87 +17,87 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 		want     []slack.Block
 	}{
 		{
-			name:     "見出しのテスト",
-			markdown: "# タイトル",
+			name:     "heading",
+			markdown: "# Title",
 			want: []slack.Block{
 				&slack.HeaderBlock{
 					Type: slack.MBTHeader,
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
-						Text:  "タイトル",
+						Text:  "Title",
 						Emoji: &boolTrue,
 					},
 				},
 			},
 		},
 		{
-			name:     "段落のテスト",
-			markdown: "これは段落です。",
+			name:     "paragraph",
+			markdown: "This is a paragraph.",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは段落です。",
+						Text: "This is a paragraph.",
 					},
 				},
 			},
 		},
 		{
-			name:     "太文字混合の段落のテスト",
-			markdown: "これは**太文字**です。",
+			name:     "paragraph with bold",
+			markdown: "This is **bold** text.",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは*太文字*です。",
+						Text: "This is *bold* text.",
 					},
 				},
 			},
 		},
 		{
-			name:     "斜体混合の段落のテスト",
-			markdown: "これは*斜体*です。",
+			name:     "paragraph with italic",
+			markdown: "This is *italic* text.",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは_斜体_です。",
+						Text: "This is _italic_ text.",
 					},
 				},
 			},
 		},
 		{
-			name:     "太文字と斜体混合の段落のテスト1",
-			markdown: "これは**太文字**と*斜体*です。",
+			name:     "paragraph with bold and italic 1",
+			markdown: "This is **bold** and *italic* text.",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは*太文字*と_斜体_です。",
+						Text: "This is *bold* and _italic_ text.",
 					},
 				},
 			},
 		},
 		{
-			name:     "太文字と斜体混合の段落のテスト2",
-			markdown: "これは**太文字と*斜体*の混合**です。",
+			name:     "paragraph with bold and italic 2",
+			markdown: "This is **bold and *italic* mixed** text.",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは*太文字と_斜体_の混合*です。",
+						Text: "This is *bold and _italic_ mixed* text.",
 					},
 				},
 			},
 		},
 		{
-			name:     "リストのテスト",
-			markdown: "- アイテム1\n- アイテム2",
+			name:     "unordered list",
+			markdown: "- Item 1\n- Item 2",
 			want: []slack.Block{
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
@@ -113,7 +112,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "アイテム1",
+											Text: "Item 1",
 										},
 									},
 								},
@@ -122,7 +121,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "アイテム2",
+											Text: "Item 2",
 										},
 									},
 								},
@@ -133,8 +132,8 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
-			name:     "ネストされたリストのテスト",
-			markdown: "- 親アイテム1\n  - 子アイテム1\n  - 子アイテム2\n- 親アイテム2",
+			name:     "nested list",
+			markdown: "- Parent 1\n  - Child 1\n  - Child 2\n- Parent 2",
 			want: []slack.Block{
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
@@ -149,7 +148,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "親アイテム1",
+											Text: "Parent 1",
 										},
 									},
 								},
@@ -165,7 +164,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "子アイテム1",
+											Text: "Child 1",
 										},
 									},
 								},
@@ -174,7 +173,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "子アイテム2",
+											Text: "Child 2",
 										},
 									},
 								},
@@ -190,7 +189,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "親アイテム2",
+											Text: "Parent 2",
 										},
 									},
 								},
@@ -201,14 +200,14 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
-			name:     "番号付きリストのテスト",
-			markdown: "1. アイテム1\n2. アイテム2",
+			name:     "ordered list",
+			markdown: "1. Item 1\n2. Item 2",
 			want: []slack.Block{
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
 						&slack.RichTextList{
-							Type:  slack.RTEList,
+							Type:   slack.RTEList,
 							Style:  slack.RTEListOrdered,
 							Indent: 0,
 							Elements: []slack.RichTextElement{
@@ -217,7 +216,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "アイテム1",
+											Text: "Item 1",
 										},
 									},
 								},
@@ -226,7 +225,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "アイテム2",
+											Text: "Item 2",
 										},
 									},
 								},
@@ -237,8 +236,8 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
-			name:     "太文字と斜体が加わったリストのテスト",
-			markdown: "- **太文字**のリスト\n- *斜体*のリスト",
+			name:     "list with bold and italic",
+			markdown: "- **bold** list item\n- *italic* list item",
 			want: []slack.Block{
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
@@ -253,14 +252,14 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "太文字",
+											Text: "bold",
 											Style: &slack.RichTextSectionTextStyle{
 												Bold: true,
 											},
 										},
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "のリスト",
+											Text: " list item",
 										},
 									},
 								},
@@ -269,14 +268,14 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "斜体",
+											Text: "italic",
 											Style: &slack.RichTextSectionTextStyle{
 												Italic: true,
 											},
 										},
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "のリスト",
+											Text: " list item",
 										},
 									},
 								},
@@ -287,27 +286,27 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
-			name:     "ハイパーリンクが含まれた段落のテスト",
-			markdown: "[ハイパーリンク](https://example.com)",
+			name:     "paragraph with hyperlink",
+			markdown: "[hyperlink](https://example.com)",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "<https://example.com|ハイパーリンク>",
+						Text: "<https://example.com|hyperlink>",
 					},
 				},
 			},
 		},
 		{
-			name:     "複数の見出しのテスト",
-			markdown: "# おはようございます\nおはようございます\n# こんにちは\nこんにちは\n# こんばんは\nこんばんは",
+			name:     "multiple headings",
+			markdown: "# Good morning\nGood morning\n# Good afternoon\nGood afternoon\n# Good evening\nGood evening",
 			want: []slack.Block{
 				&slack.HeaderBlock{
 					Type: slack.MBTHeader,
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
-						Text:  "おはようございます",
+						Text:  "Good morning",
 						Emoji: &boolTrue,
 					},
 				},
@@ -315,14 +314,14 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "おはようございます",
+						Text: "Good morning",
 					},
 				},
 				&slack.HeaderBlock{
 					Type: slack.MBTHeader,
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
-						Text:  "こんにちは",
+						Text:  "Good afternoon",
 						Emoji: &boolTrue,
 					},
 				},
@@ -330,14 +329,14 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "こんにちは",
+						Text: "Good afternoon",
 					},
 				},
 				&slack.HeaderBlock{
 					Type: slack.MBTHeader,
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
-						Text:  "こんばんは",
+						Text:  "Good evening",
 						Emoji: &boolTrue,
 					},
 				},
@@ -345,13 +344,13 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "こんばんは",
+						Text: "Good evening",
 					},
 				},
 			},
 		},
 		{
-			name:     "コードブロックのテスト",
+			name:     "code block",
 			markdown: "```\ncode block\n```",
 			want: []slack.Block{
 				&slack.RichTextBlock{
@@ -373,7 +372,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
-			name:     "マルチラインコードブロックのテスト",
+			name:     "multiline code block",
 			markdown: "```\nfoo\nbar\n```",
 			want: []slack.Block{
 				&slack.RichTextBlock{
@@ -395,7 +394,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
-			name:     "言語指定付きコードブロックのテスト",
+			name:     "code block with language specifier",
 			markdown: "```go\nfunc main() {\n    fmt.Println(\"hello\")\n}\n```",
 			want: []slack.Block{
 				&slack.RichTextBlock{
@@ -417,21 +416,21 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
-			name:     "インラインコードのテスト",
-			markdown: "これは`インラインコード`です",
+			name:     "inline code",
+			markdown: "This is `inline code` text",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは`インラインコード`です",
+						Text: "This is `inline code` text",
 					},
 				},
 			},
 		},
 		{
-			name:     "引用のテスト",
-			markdown: "> 引用文です",
+			name:     "blockquote",
+			markdown: "> This is a quote",
 			want: []slack.Block{
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
@@ -441,7 +440,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 							Elements: []slack.RichTextSectionElement{
 								&slack.RichTextSectionTextElement{
 									Type: slack.RTSEText,
-									Text: "引用文です",
+									Text: "This is a quote",
 								},
 							},
 						},
@@ -450,41 +449,41 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
-			name:     "複数行の段落のテスト",
-			markdown: "1行目\n\n2行目\n\n3行目",
+			name:     "multiple paragraphs",
+			markdown: "Line 1\n\nLine 2\n\nLine 3",
 			want: []slack.Block{
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "1行目",
+						Text: "Line 1",
 					},
 				},
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "2行目",
+						Text: "Line 2",
 					},
 				},
 				&slack.SectionBlock{
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "3行目",
+						Text: "Line 3",
 					},
 				},
 			},
 		},
 		{
-			name:     "複合的なマークダウンのテスト",
-			markdown: "# メインタイトル\n\nこれは**太字**と*斜体*が含まれた段落です。\n\n- リストアイテム1\n- `コード`を含むアイテム\n- **太字**なアイテム\n\n> *引用文*の中に**太字**を入れることもできます\n\n[リンク](https://example.com)を含む`インラインコード`な段落です。",
+			name:     "complex markdown",
+			markdown: "# Main Title\n\nThis is a paragraph with **bold** and *italic* text.\n\n- List item 1\n- Item with `code`\n- **Bold** item\n\n> *Quote* with **bold** can also be included\n\n[Link](https://example.com) and `inline code` in a paragraph.",
 			want: []slack.Block{
 				&slack.HeaderBlock{
 					Type: slack.MBTHeader,
 					Text: &slack.TextBlockObject{
 						Type:  slack.PlainTextType,
-						Text:  "メインタイトル",
+						Text:  "Main Title",
 						Emoji: &boolTrue,
 					},
 				},
@@ -492,7 +491,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "これは*太字*と_斜体_が含まれた段落です。",
+						Text: "This is a paragraph with *bold* and _italic_ text.",
 					},
 				},
 				&slack.RichTextBlock{
@@ -508,7 +507,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "リストアイテム1",
+											Text: "List item 1",
 										},
 									},
 								},
@@ -517,15 +516,15 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "コード",
+											Text: "Item with ",
+										},
+										&slack.RichTextSectionTextElement{
+											Type: slack.RTSEText,
+											Text: "code",
 											Style: &slack.RichTextSectionTextStyle{
 												Code: true,
 											},
 										},
-										&slack.RichTextSectionTextElement{
-											Type: slack.RTSEText,
-											Text: "を含むアイテム",
-										},
 									},
 								},
 								&slack.RichTextSection{
@@ -533,14 +532,14 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 									Elements: []slack.RichTextSectionElement{
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "太字",
+											Text: "Bold",
 											Style: &slack.RichTextSectionTextStyle{
 												Bold: true,
 											},
 										},
 										&slack.RichTextSectionTextElement{
 											Type: slack.RTSEText,
-											Text: "なアイテム",
+											Text: " item",
 										},
 									},
 								},
@@ -556,25 +555,25 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 							Elements: []slack.RichTextSectionElement{
 								&slack.RichTextSectionTextElement{
 									Type: slack.RTSEText,
-									Text: "引用文",
+									Text: "Quote",
 									Style: &slack.RichTextSectionTextStyle{
 										Italic: true,
 									},
 								},
 								&slack.RichTextSectionTextElement{
 									Type: slack.RTSEText,
-									Text: "の中に",
+									Text: " with ",
 								},
 								&slack.RichTextSectionTextElement{
 									Type: slack.RTSEText,
-									Text: "太字",
+									Text: "bold",
 									Style: &slack.RichTextSectionTextStyle{
 										Bold: true,
 									},
 								},
 								&slack.RichTextSectionTextElement{
 									Type: slack.RTSEText,
-									Text: "を入れることもできます",
+									Text: " can also be included",
 								},
 							},
 						},
@@ -584,7 +583,7 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTSection,
 					Text: &slack.TextBlockObject{
 						Type: slack.MarkdownType,
-						Text: "<https://example.com|リンク>を含む`インラインコード`な段落です。",
+						Text: "<https://example.com|Link> and `inline code` in a paragraph.",
 					},
 				},
 			},
@@ -595,79 +594,73 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := ConvertMarkdownTextToBlocks(tt.markdown)
 			if err != nil {
-				t.Errorf("ConvertMarkdownTextToBlocks() にエラーが発生しました: %v", err)
+				t.Errorf("ConvertMarkdownTextToBlocks() returned error: %v", err)
 				return
 			}
 			if len(got) != len(tt.want) {
-				t.Errorf("ConvertMarkdownTextToBlocks() のブロック数が異なります got = %v, want %v", len(got), len(tt.want))
+				t.Errorf("ConvertMarkdownTextToBlocks() block count mismatch: got = %v, want %v", len(got), len(tt.want))
 				return
 			}
 
 			for i := range got {
 				if got[i].BlockType() != tt.want[i].BlockType() {
-					t.Errorf("ブロックタイプが異なります index=%d, got=%v, want=%v", i, got[i].BlockType(), tt.want[i].BlockType())
+					t.Errorf("block type mismatch at index=%d, got=%v, want=%v", i, got[i].BlockType(), tt.want[i].BlockType())
 				}
 
-				// RichTextBlockの場合は、内部の要素も検証
 				if richTextBlock, ok := got[i].(*slack.RichTextBlock); ok {
 					wantRichTextBlock := tt.want[i].(*slack.RichTextBlock)
 
 					if len(richTextBlock.Elements) != len(wantRichTextBlock.Elements) {
-						t.Errorf("RichTextBlock の要素数が異なります index=%d, got=%v, want=%v",
+						t.Errorf("RichTextBlock element count mismatch at index=%d, got=%v, want=%v",
 							i, len(richTextBlock.Elements), len(wantRichTextBlock.Elements))
 						continue
 					}
 
-					// リストの検証
 					if list, ok := richTextBlock.Elements[0].(*slack.RichTextList); ok {
 						wantList := wantRichTextBlock.Elements[0].(*slack.RichTextList)
 						if list.Style != wantList.Style {
-							t.Errorf("リストのスタイルが異なります index=%d, got=%v, want=%v",
+							t.Errorf("list style mismatch at index=%d, got=%v, want=%v",
 								i, list.Style, wantList.Style)
 						}
 
 						if len(list.Elements) != len(wantList.Elements) {
-							t.Errorf("リストアイテムの数が異なります index=%d, got=%v, want=%v",
+							t.Errorf("list item count mismatch at index=%d, got=%v, want=%v",
 								i, len(list.Elements), len(wantList.Elements))
 							continue
 						}
 
-						// 各リストアイテムの検証
 						for j, elem := range list.Elements {
 							section := elem.(*slack.RichTextSection)
 							wantSection := wantList.Elements[j].(*slack.RichTextSection)
 
 							if len(section.Elements) != len(wantSection.Elements) {
-								t.Errorf("セクション要素の数が異なります index=%d,%d, got=%v, want=%v",
+								t.Errorf("section element count mismatch at index=%d,%d, got=%v, want=%v",
 									i, j, len(section.Elements), len(wantSection.Elements))
 								continue
 							}
 
-							// テキスト要素の検証
 							textElem := section.Elements[0].(*slack.RichTextSectionTextElement)
 							wantTextElem := wantSection.Elements[0].(*slack.RichTextSectionTextElement)
 							if textElem.Text != wantTextElem.Text {
-								t.Errorf("テキスト内容が異なります index=%d,%d, got=%v, want=%v",
+								t.Errorf("text content mismatch at index=%d,%d, got=%v, want=%v",
 									i, j, textElem.Text, wantTextElem.Text)
 							}
 						}
 					}
 				}
 
-				// HeaderBlockの場合は、テキスト内容を検証
 				if headerBlock, ok := got[i].(*slack.HeaderBlock); ok {
 					wantHeaderBlock := tt.want[i].(*slack.HeaderBlock)
 					if headerBlock.Text.Text != wantHeaderBlock.Text.Text {
-						t.Errorf("ヘッダーのテキストが異なります index=%d, got=%v, want=%v",
+						t.Errorf("header text mismatch at index=%d, got=%v, want=%v",
 							i, headerBlock.Text.Text, wantHeaderBlock.Text.Text)
 					}
 				}
 
-				// SectionBlockの場合は、テキスト内容を検証
 				if sectionBlock, ok := got[i].(*slack.SectionBlock); ok {
 					wantSectionBlock := tt.want[i].(*slack.SectionBlock)
 					if sectionBlock.Text.Text != wantSectionBlock.Text.Text {
-						t.Errorf("セクションのテキストが異なります index=%d, got=%v, want=%v",
+						t.Errorf("section text mismatch at index=%d, got=%v, want=%v",
 							i, sectionBlock.Text.Text, wantSectionBlock.Text.Text)
 					}
 				}
