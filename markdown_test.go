@@ -449,6 +449,23 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
+			// Single \n within a paragraph creates soft line breaks.
+			// Each line must be preserved in the mrkdwn output — without the fix,
+			// soft line breaks are silently dropped causing adjacent bold/italic
+			// markers to collide and produce broken Slack formatting.
+			name:     "paragraph with single newlines between formatted lines",
+			markdown: "**User**: John Doe\n**Risk Level**: High\n*Urgent review required*",
+			want: []slack.Block{
+				&slack.SectionBlock{
+					Type: slack.MBTSection,
+					Text: &slack.TextBlockObject{
+						Type: slack.MarkdownType,
+						Text: "*User*: John Doe\n*Risk Level*: High\n_Urgent review required_",
+					},
+				},
+			},
+		},
+		{
 			name:     "multiple paragraphs",
 			markdown: "Line 1\n\nLine 2\n\nLine 3",
 			want: []slack.Block{

@@ -444,6 +444,9 @@ func convertInlineMarkdownToMrkdwn(markdown string) string {
 		case ast.KindText:
 			textNode := n.(*ast.Text)
 			result += string(textNode.Segment.Value(source))
+			if textNode.SoftLineBreak() {
+				result += "\n"
+			}
 
 		case ast.KindEmphasis:
 			emp := n.(*ast.Emphasis)
