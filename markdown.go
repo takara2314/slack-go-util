@@ -82,17 +82,12 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 			blocks = append(blocks, &slack.RichTextBlock{
 				Type: slack.MBTRichText,
 				Elements: []slack.RichTextElement{
-					&slack.RichTextPreformatted{
-						RichTextSection: slack.RichTextSection{
-							Type: slack.RTEPreformatted,
-							Elements: []slack.RichTextSectionElement{
-								&slack.RichTextSectionTextElement{
-									Type: slack.RTSEText,
-									Text: codeText,
-								},
-							},
+					newRichTextPreformatted([]slack.RichTextSectionElement{
+						&slack.RichTextSectionTextElement{
+							Type: slack.RTSEText,
+							Text: codeText,
 						},
-					},
+					}),
 				},
 			})
 			return ast.WalkSkipChildren, nil
@@ -427,6 +422,13 @@ func getTextStyle(isBold, isItalic bool) *slack.RichTextSectionTextStyle {
 		Bold:   isBold,
 		Italic: isItalic,
 	}
+}
+
+func newRichTextPreformatted(elements []slack.RichTextSectionElement) *slack.RichTextPreformatted {
+	p := &slack.RichTextPreformatted{}
+	p.Type = slack.RTEPreformatted
+	p.Elements = elements
+	return p
 }
 
 func convertInlineMarkdownToMrkdwn(markdown string) string {
