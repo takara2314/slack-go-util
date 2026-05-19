@@ -356,17 +356,12 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
-						&slack.RichTextPreformatted{
-							RichTextSection: slack.RichTextSection{
-								Type: slack.RTEPreformatted,
-								Elements: []slack.RichTextSectionElement{
-									&slack.RichTextSectionTextElement{
-										Type: slack.RTSEText,
-										Text: "code block",
-									},
+						newRichTextPreformatted([]slack.RichTextSectionElement{
+								&slack.RichTextSectionTextElement{
+									Type: slack.RTSEText,
+									Text: "code block",
 								},
-							},
-						},
+							}),
 					},
 				},
 			},
@@ -378,17 +373,12 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
-						&slack.RichTextPreformatted{
-							RichTextSection: slack.RichTextSection{
-								Type: slack.RTEPreformatted,
-								Elements: []slack.RichTextSectionElement{
-									&slack.RichTextSectionTextElement{
-										Type: slack.RTSEText,
-										Text: "foo\nbar",
-									},
+						newRichTextPreformatted([]slack.RichTextSectionElement{
+								&slack.RichTextSectionTextElement{
+									Type: slack.RTSEText,
+									Text: "foo\nbar",
 								},
-							},
-						},
+							}),
 					},
 				},
 			},
@@ -400,17 +390,12 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 				&slack.RichTextBlock{
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
-						&slack.RichTextPreformatted{
-							RichTextSection: slack.RichTextSection{
-								Type: slack.RTEPreformatted,
-								Elements: []slack.RichTextSectionElement{
-									&slack.RichTextSectionTextElement{
-										Type: slack.RTSEText,
-										Text: "func main() {\n    fmt.Println(\"hello\")\n}",
-									},
+						newRichTextPreformatted([]slack.RichTextSectionElement{
+								&slack.RichTextSectionTextElement{
+									Type: slack.RTSEText,
+									Text: "func main() {\n    fmt.Println(\"hello\")\n}",
 								},
-							},
-						},
+							}),
 					},
 				},
 			},
