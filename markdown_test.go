@@ -357,11 +357,11 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
 						newRichTextPreformatted([]slack.RichTextSectionElement{
-								&slack.RichTextSectionTextElement{
-									Type: slack.RTSEText,
-									Text: "code block",
-								},
-							}),
+							&slack.RichTextSectionTextElement{
+								Type: slack.RTSEText,
+								Text: "code block",
+							},
+						}),
 					},
 				},
 			},
@@ -374,11 +374,11 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
 						newRichTextPreformatted([]slack.RichTextSectionElement{
-								&slack.RichTextSectionTextElement{
-									Type: slack.RTSEText,
-									Text: "foo\nbar",
-								},
-							}),
+							&slack.RichTextSectionTextElement{
+								Type: slack.RTSEText,
+								Text: "foo\nbar",
+							},
+						}),
 					},
 				},
 			},
@@ -391,11 +391,11 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 					Type: slack.MBTRichText,
 					Elements: []slack.RichTextElement{
 						newRichTextPreformatted([]slack.RichTextSectionElement{
-								&slack.RichTextSectionTextElement{
-									Type: slack.RTSEText,
-									Text: "func main() {\n    fmt.Println(\"hello\")\n}",
-								},
-							}),
+							&slack.RichTextSectionTextElement{
+								Type: slack.RTSEText,
+								Text: "func main() {\n    fmt.Println(\"hello\")\n}",
+							},
+						}),
 					},
 				},
 			},
