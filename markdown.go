@@ -125,6 +125,11 @@ func ConvertMarkdownTextToBlocks(markdown string) ([]slack.Block, error) {
 			var quoteText string
 			for child := quote.FirstChild(); child != nil; child = child.NextSibling() {
 				if child.Kind() == ast.KindParagraph {
+					// goldmark trims the trailing newline of a paragraph's last
+					// line, so consecutive paragraphs need an explicit break.
+					if quoteText != "" {
+						quoteText += "\n\n"
+					}
 					lines := child.Lines()
 					for i := 0; i < lines.Len(); i++ {
 						line := lines.At(i)
@@ -446,7 +451,10 @@ func convertInlineMarkdownToMrkdwn(markdown string) string {
 		case ast.KindText:
 			textNode := n.(*ast.Text)
 			result += string(textNode.Segment.Value(source))
-			if textNode.SoftLineBreak() {
+			// goldmark flags a line end as either soft (plain newline) or hard
+			// (two trailing spaces or a backslash), never both; both must keep
+			// the line break, otherwise the neighbouring lines run together.
+			if textNode.SoftLineBreak() || textNode.HardLineBreak() {
 				result += "\n"
 			}
 
