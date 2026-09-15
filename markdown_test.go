@@ -451,6 +451,45 @@ func TestConvertMarkdownTextToBlocks(t *testing.T) {
 			},
 		},
 		{
+			// Two trailing spaces or a trailing backslash are CommonMark hard
+			// line breaks. goldmark flags them as hard (not soft) breaks, so they
+			// need the same treatment or the lines run together.
+			name:     "paragraph with hard line breaks",
+			markdown: "line one  \nline two\\\nline three",
+			want: []slack.Block{
+				&slack.SectionBlock{
+					Type: slack.MBTSection,
+					Text: &slack.TextBlockObject{
+						Type: slack.MarkdownType,
+						Text: "line one\nline two\nline three",
+					},
+				},
+			},
+		},
+		{
+			// A blank quote line separates paragraphs inside the quote. goldmark
+			// trims the newline off a paragraph's last line, so without an
+			// explicit separator the paragraphs are concatenated.
+			name:     "blockquote with multiple paragraphs",
+			markdown: "> first paragraph\n>\n> second paragraph",
+			want: []slack.Block{
+				&slack.RichTextBlock{
+					Type: slack.MBTRichText,
+					Elements: []slack.RichTextElement{
+						&slack.RichTextQuote{
+							Type: slack.RTEQuote,
+							Elements: []slack.RichTextSectionElement{
+								&slack.RichTextSectionTextElement{
+									Type: slack.RTSEText,
+									Text: "first paragraph\n\nsecond paragraph",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
 			name:     "multiple paragraphs",
 			markdown: "Line 1\n\nLine 2\n\nLine 3",
 			want: []slack.Block{
